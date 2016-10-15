@@ -1,0 +1,15 @@
+{
+  "name": "slider",
+  "version": "1.0.0",
+  "description": "Slider for Eysys Limited technical test",
+  "main": "index.js",
+  "author": "Owen C. Jones <owencjones@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-sass": "^2.3.2",
+    "gulp-serve": "^1.4.0",
+    "gulp-sourcemaps": "^2.1.1"
+  }
+}

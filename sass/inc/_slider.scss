@@ -1,0 +1,48 @@
+.slider {
+
+    margin: 0 auto;
+
+    width: 700px;
+    max-width: 90%;
+    padding-bottom: 35%;
+
+    position: relative;
+
+    top: 3em;
+
+    .innerContainer {
+
+        border: 1px solid grey;
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+
+        .loadingContainer {
+
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: inout 2s infinite;
+
+        }
+
+    }
+
+}
+
+@keyframes inout {
+
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+
+}
