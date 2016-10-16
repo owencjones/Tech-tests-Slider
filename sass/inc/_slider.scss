@@ -2,9 +2,8 @@
 
     margin: 0 auto;
 
-    width: 700px;
-    max-width: 90%;
-    padding-bottom: 35%;
+    width: 90%;
+    padding-bottom: 31%;
 
     position: relative;
 
@@ -13,6 +12,15 @@
     .innerContainer {
 
         border: 1px solid grey;
+        background: #f6f8f9;
+        background: -webkit-linear-gradient(-45deg, #f6f8f9 0%, #e5ebee 50%, #d7dee3 51%, #f5f7f9 100%);
+        background: -o-linear-gradient(-45deg, #f6f8f9 0%, #e5ebee 50%, #d7dee3 51%, #f5f7f9 100%);
+        background: linear-gradient(135deg, #f6f8f9 0%, #e5ebee 50%, #d7dee3 51%, #f5f7f9 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f6f8f9', endColorstr='#f5f7f9',GradientType=1 );
+
+        box-shadow: 0 0 12px rgb(175, 175, 175);
+        box-shadow: 0 0 12px rgba(93, 93, 93, 0.4);
+
         position: absolute;
         top: 0;
         left: 0;
@@ -27,6 +35,112 @@
             transform: translate(-50%, -50%);
             animation: inout 2s infinite;
 
+            font-size: 1.5em;
+            font-size: 3vw;
+
+        }
+
+        .main-slider {
+
+            display: none;
+            speak: none; // for accessibility until active
+
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            overflow: hidden;
+            width: 100%;
+
+            .image-row {
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+
+                white-space: nowrap;
+
+                transition-property: margin-left;
+                transition-timing-function: cubic-bezier(0,.37,1,.64);
+
+                img {
+                    display: inline-block;
+                    max-width: 100%;
+                }
+            }
+            .bottom-bar {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                height: auto;
+                width: 100%;
+                z-index: 201;
+
+                padding: 0.6em 0.5em;
+
+                background-color: white;
+                background-color: rgba(255, 255, 255, 0.4);
+
+                .title {
+                    margin-top: 0;
+                    margin-bottom: 0.5em;
+                    font-size: 1.5em;
+                }
+
+                .intro {
+                    margin-bottom: 0;
+
+                    a[href] {
+                        text-decoration: none;
+                        &:hover {
+                            text-decoration: underline;
+                        }
+                    }
+                }
+
+                .pager {
+                    position: absolute;
+                    bottom: 0;
+                    right: 0;
+                    padding: 0.3em;
+
+                    .slide-link {
+                        margin: 0 0.2em;
+                        cursor: pointer;
+                    }
+
+                    .slide-link:after {
+                        content: '\25cf';
+                        color: grey;
+                    }
+                    .slide-link.active:after {
+                        color: darkgrey;
+                    }
+                }
+
+            }
+
+            .full-space-link {
+                position: absolute;
+                top:0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 200;    // Everyone always puts far too high a level for this
+            }
+
+        }
+
+        &.loaded {
+            .loadingContainer {
+                display: none;
+                speak: none; // For accessibility
+            }
+            .main-slider {
+                display: block;
+                speak: normal;
+            }
         }
 
     }
