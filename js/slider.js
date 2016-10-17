@@ -1,23 +1,32 @@
 var Slider;
 (function ($) {
 
+
+    /**
+
+        Using private/public methods.  The _priv object carries the internal methods, and the _methods object carries the exposed methods.
+
+    **/
     var _methods = {}, _priv = {};
 
+    // Setup the default config, ready to be overridden by the config passed from the Initialization.
     _priv.defaultConfig = _priv.configLoaded = {
-        timeout: 5000,
-        txTime: 1000,
-        sliderContainer: '#slider',
-        pauseOnHover: true,
-        arrowKeysEnabled: true,
-        images: []
+        timeout: 5000,                  // How often the slides change
+        txTime: 1000,                   // How long the transition takes
+        sliderContainer: '#slider',     // The identifier for the slider container
+        pauseOnHover: true,             // Should the slider pause when the mouse is over it?
+        arrowKeysEnabled: true,         // Should the slider react to arrow keys?
+        images: []                      // The images to use (empty until config loaded)
     };
+
+    // Set the config to include the loaded config from the user
     _priv.setConfig = function (config) {
 
-        try {
+        try {   // Attempt to merge the config from the initialization, wrapped in a try-catch because the config passed may be invalid.
 
             _priv.configLoaded = $.extend({}, _priv.defaultConfig, config);
 
-        } catch (e) {
+        } catch (e) {   // Fallback to a valid default config
 
             _priv.configLoaded = _priv.defaultConfig;
 
@@ -26,11 +35,15 @@ var Slider;
         return _priv.configLoaded;
 
     };
+
+    // Getter for the config
     _priv.getConfig = function () {
 
         return _priv.configLoaded;
 
     }
+
+    // make a JSON string of the config and store it on the container itself, in case it's needed - ultimately it wasn't!
     _priv.attachConfig = function (containerId) {
         var configString = JSON.stringify(_priv.getConfig()),
             DOMObject = $(containerId);
@@ -38,6 +51,7 @@ var Slider;
         DOMObject.attr('data-config', configString);
     }
 
+    // Render the inner DOM elements necessary for the slider to work
     _priv.innerDOM = function (containerId) {
 
         var container = _priv.sliderContainer = $(containerId);
@@ -73,6 +87,7 @@ var Slider;
 
     }
 
+    // Initialization of variables to be set by initialization method later.
     _priv.sliderContainer= null;
     _priv.imageArray = null;
     _priv.imageRow = null;
@@ -82,9 +97,9 @@ var Slider;
     _priv.currentLink = null;
     _priv.globalLink = null;
     _priv.pager = null;
-
     _priv.eventLoop = null;
 
+    // Check the current slide index and show that slide - used by all the public change slide functions.
     _priv.setupCurrentSlide = function () {
 
         // Set text
@@ -104,10 +119,12 @@ var Slider;
 
     }
 
+    // Pause the event loop -used by function that interrupt normal flow, like ob mouse over behaviour and arrow key operation
     _priv.stopLoop = function () {
         clearInterval(_priv.eventLoop);
     }
 
+    // Start or restart the event loop, with optional delay used to wait until after slide movement in some cases.
     _priv.startLoop = function (delay) {
 
         if (delay && (parseInt(delay) == delay)) {
@@ -120,6 +137,7 @@ var Slider;
 
     }
 
+    // Bind whichever events are involved.  Hover, arrow keys and pager clicks
     _priv.bindEvents = function () {
 
         var config = _priv.configLoaded;
@@ -165,18 +183,23 @@ var Slider;
 
     };
 
+    // @public: move to the next slide
     _methods.prevSlide = function () {
         _priv.currentSlide--;
         if (_priv.currentSlide < 0) _priv.currentSlide = _priv.imageArray.length;
 
         _priv.setupCurrentSlide();
     };
+
+    // @public: move the previous slide
     _methods.nextSlide = function () {
         _priv.currentSlide++;
         if (_priv.currentSlide > _priv.imageArray.length - 1) _priv.currentSlide = 0;
 
         _priv.setupCurrentSlide();
     };
+
+    // @public: move to slide at index n (zero-indexed)
     _methods.moveToSlide = function (n) {
 
         // Validate input, and return appropriate errors if invalid
@@ -198,19 +221,22 @@ var Slider;
 
     }
 
+    // The main Slider object constructor.
     Slider = function (config) {
 
+        // Initialise config
         _priv.setConfig(config);
         this.config = _priv.getConfig();
 
+        // Pass public methods to returned object.
         this.methods = _methods;
 
-        //Initialization
+        //Initialization of DOM
         _priv.attachConfig(this.config.sliderContainer);
         _priv.innerDOM(this.config.sliderContainer);
 
+        // Set array of images to use, and start loading them
         _priv.imageArray = this.config.images;
-
         if ($.isArray(_priv.imageArray) && _priv.imageArray.length > 0) {
 
             _priv.imageRow = $('.image-row');
@@ -252,23 +278,32 @@ var Slider;
 
             function imagesLoaded () {
 
+                // All images are now loaded - start show
+
+                // Populate the cached globals from earlier
                 _priv.currentTitle = $('.title');
                 _priv.currentIntro = $('.intro-text');
                 _priv.currentLink = $('.intro > a');
                 _priv.globalLink = $('.full-space-link');
-                _priv.imageRow.css('transition-duration', _priv.configLoaded.txTime + 'ms');
-                _priv.setupCurrentSlide();
 
+                // Set transition speed.
+                _priv.imageRow.css('transition-duration', _priv.configLoaded.txTime + 'ms');
+
+                // Show current slide, set pager status
+                _priv.setupCurrentSlide();
                 _priv.pager.children('span').first().addClass('active');
 
+                // Bind the events
                 _priv.bindEvents();
 
+                // Finally, start the event loop.
                 _priv.startLoop();
 
             }
 
         }
 
+        // Return the object to expose the public methods.
         return this;
 
     }

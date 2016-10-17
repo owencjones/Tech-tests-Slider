@@ -2,6 +2,7 @@
 
     $(document).ready(function () {
 
+        // Make array of slides, using the 'slide' function below
         var slides = [
             new slide('Slide 1', 'Lorem Ipsum Dolor Consecteur Adipscing Elit', 'http://example.com/slide-1', 'img/001.png', 'Slide 1'),
             new slide('Slide 2', 'Lorem Ipsum Dolor Consecteur Adipscing Elit', 'http://example.com/slide-2', 'img/002.png', 'Slide 2'),
@@ -10,14 +11,17 @@
             new slide('Slide 5', 'Lorem Ipsum Dolor Consecteur Adipscing Elit', 'http://example.com/slide-5', 'img/005.png', 'Slide 5'),
         ];
 
-        var config = {};
+        // Any optional config overrides.
+        var config = {
+            images: slides
+        };
 
-        config.images = slides;
-
-        window.slider = new Slider(config);
+        // Run slider
+        var slider = new Slider(config);
 
     });
 
+    // Simple function to return the JSON entries easily.
     function slide(title, blurb, link, img, alt) {
 
         var _ret = {};
