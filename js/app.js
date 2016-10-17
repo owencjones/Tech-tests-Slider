@@ -14,7 +14,7 @@
 
         config.images = slides;
 
-        var slider = new Slider(config);
+        window.slider = new Slider(config);
 
     });
 

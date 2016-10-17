@@ -7,6 +7,8 @@ var Slider;
         timeout: 5000,
         txTime: 1000,
         sliderContainer: '#slider',
+        pauseOnHover: true,
+        arrowKeysEnabled: true,
         images: []
     };
     _priv.setConfig = function (config) {
@@ -38,7 +40,7 @@ var Slider;
 
     _priv.innerDOM = function (containerId) {
 
-        var container = $(containerId);
+        var container = _priv.sliderContainer = $(containerId);
 
         if (container.length !== 0) {
 
@@ -71,6 +73,7 @@ var Slider;
 
     }
 
+    _priv.sliderContainer= null;
     _priv.imageArray = null;
     _priv.imageRow = null;
     _priv.currentSlide = null;
@@ -101,6 +104,67 @@ var Slider;
 
     }
 
+    _priv.stopLoop = function () {
+        clearInterval(_priv.eventLoop);
+    }
+
+    _priv.startLoop = function (delay) {
+
+        if (delay && (parseInt(delay) == delay)) {
+            setTimeout(function () {
+                _priv.eventLoop = setInterval(_methods.nextSlide, _priv.configLoaded.timeout);
+            }, delay);
+        } else {
+            _priv.eventLoop = setInterval(_methods.nextSlide, _priv.configLoaded.timeout);
+        }
+
+    }
+
+    _priv.bindEvents = function () {
+
+        var config = _priv.configLoaded;
+
+        if (config.pauseOnHover) {
+            _priv.sliderContainer.on('mouseover', function () {
+                _priv.stopLoop();
+            }).on('mouseout', function () {
+                _priv.startLoop();
+            });
+        }
+        if (config.arrowKeysEnabled) {
+            $(window).on('keydown', function (e) {
+
+                var keyPressed = e.which; // keyCode not supported in all IE versions
+
+                switch (keyPressed) {
+
+                    case 37: //left arrow key
+                        _priv.stopLoop();
+                        _methods.prevSlide();
+                        _priv.startLoop(_priv.configLoaded.txTime);
+                        break;
+
+                    case 39: //right arrow key
+                        _priv.stopLoop();
+                        _methods.nextSlide();
+                        _priv.startLoop(_priv.configLoaded.txTime);
+                        break;
+
+                }
+
+            });
+        }
+
+        // Pager events
+        _priv.pager.children('.slide-link').on('click tap', function (e) {
+
+            var index = $(this).attr('data-link-index');
+            _methods.moveToSlide(index);
+
+        });
+
+    };
+
     _methods.prevSlide = function () {
         _priv.currentSlide--;
         if (_priv.currentSlide < 0) _priv.currentSlide = _priv.imageArray.length;
@@ -113,6 +177,26 @@ var Slider;
 
         _priv.setupCurrentSlide();
     };
+    _methods.moveToSlide = function (n) {
+
+        // Validate input, and return appropriate errors if invalid
+        var index = parseInt(n);
+        if (n != index) {
+            console.error('[Slider.moveToSlide] - argument must be an integer');
+            return false;
+        }
+        if (index < 0 || index > (_priv.imageArray.length - 1)) {
+            console.error('[Slider.moveToSlide] - argument must be the index of an existing slide');
+            return false;
+        }
+
+        // Stop event loop, and reinstate after transition has occurred.
+        _priv.stopLoop();
+        _priv.currentSlide = index;
+        _priv.setupCurrentSlide();
+        _priv.startLoop(_priv.configLoaded.txTime);
+
+    }
 
     Slider = function (config) {
 
@@ -175,7 +259,11 @@ var Slider;
                 _priv.imageRow.css('transition-duration', _priv.configLoaded.txTime + 'ms');
                 _priv.setupCurrentSlide();
 
-                _priv.eventLoop = setInterval(_methods.nextSlide, _priv.configLoaded.timeout);
+                _priv.pager.children('span').first().addClass('active');
+
+                _priv.bindEvents();
+
+                _priv.startLoop();
 
             }
 
