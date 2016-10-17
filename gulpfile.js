@@ -1,5 +1,7 @@
 'use strict';
 
+// Gulp is the task runner that compiles the styling and serves the page.
+
 const gulp = require('gulp');
 const sass = require('gulp-sass');
 const sourcemaps = require('gulp-sourcemaps');
